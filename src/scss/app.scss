@@ -1,0 +1,59 @@
+@import 'variables';
+
+* {
+  color: $font-color;
+  font-family: $font-stack;
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  text-align: center;
+  padding-top: 5rem;
+  background: white;
+}
+
+header h1 {
+  margin: $spacing-base auto ($spacing-base) auto;
+  font-size: 2rem;
+  width: 50%;
+  text-transform: uppercase;
+}
+
+ul {
+  list-style: none;
+  text-align: left;
+  width: 80%;
+  margin: auto;
+  padding: 0;
+  li {
+    margin: ($spacing-base / 2) auto;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $font-color-completed;
+    padding: ($spacing-base / 2) ($spacing-base / 4);
+    .delete-button {
+      float: right;
+      clear: left;
+      color: $secondary-color;
+    }
+  }
+}
+
+
+input[type=text] {
+  min-height: 35px;
+  max-width: 50%;
+  background: #eee;
+  border: none;
+  color: $font-color;
+  font-size: 1.5rem;
+}
+
+#new-todo {
+  margin: $spacing-base / 2;
+  color: $primary-color;
+}
