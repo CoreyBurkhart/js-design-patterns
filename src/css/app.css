@@ -2,7 +2,8 @@
 * {
   color: #555;
   font-family: "Delius", cursive;
-  font-size: 16px; }
+  font-size: 16px;
+  text-transform: capitalize; }
 
 body {
   margin: 0;
@@ -10,11 +11,10 @@ body {
   height: 100vh;
   width: 100%;
   text-align: center;
-  padding-top: 5rem;
   background: white; }
 
 header h1 {
-  margin: 2rem auto 2rem auto;
+  margin: 8rem auto 2rem auto;
   font-size: 2rem;
   width: 50%;
   text-transform: uppercase; }
@@ -27,25 +27,66 @@ ul {
   padding: 0; }
   ul li {
     margin: 1rem auto;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 600;
-    color: #999;
+    color: #555;
     padding: 1rem 0.5rem; }
-    ul li .delete-button {
+    ul li .delete-button, ul li .complete-button {
+      cursor: pointer;
       float: right;
       clear: left;
+      margin: 0 2rem;
       color: orangered; }
+    ul li .li-content:hover:after {
+      font-family: FontAwesome;
+      font-size: 1rem;
+      content: "\f040";
+      cursor: text;
+      position: relative;
+      bottom: 1.2rem;
+      left: .5rem;
+      color: #27ae60; }
+    ul li .complete-button {
+      color: #27ae60; }
+    ul li .input, ul li .li-content {
+      font-size: 1.6rem; }
 
 input[type=text] {
-  min-height: 35px;
-  max-width: 50%;
+  min-height: 80%;
   background: #eee;
   border: none;
   color: #555;
-  font-size: 1.5rem; }
+  border-radius: 5px;
+  outline: none; }
+  input[type=text]:active {
+    border: none; }
+
+input[type=checkbox] {
+  width: 2rem;
+  height: 2rem; }
+  input[type=checkbox]:checked {
+    background: #27ae60; }
+
+.error {
+  border: 2px solid orangered !important; }
 
 #new-todo {
-  margin: 1rem;
+  cursor: pointer;
+  margin: 1rem auto;
   color: #27ae60; }
+
+.complete .li-content {
+  text-decoration: line-through;
+  color: #999; }
+
+.hidden {
+  display: none; }
+
+@media (min-width: 800px) {
+  ul {
+    width: 50%; } }
+@media (min-width: 1200px) {
+  ul {
+    width: 40%; } }
 
 /*# sourceMappingURL=app.css.map */

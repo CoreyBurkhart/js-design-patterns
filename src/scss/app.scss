@@ -4,6 +4,7 @@
   color: $font-color;
   font-family: $font-stack;
   font-size: 16px;
+  text-transform: capitalize;
 }
 
 body {
@@ -12,12 +13,11 @@ body {
   height: 100vh;
   width: 100%;
   text-align: center;
-  padding-top: 5rem;
   background: white;
 }
 
 header h1 {
-  margin: $spacing-base auto ($spacing-base) auto;
+  margin: $spacing-base * 4 auto ($spacing-base) auto;
   font-size: 2rem;
   width: 50%;
   text-transform: uppercase;
@@ -31,29 +31,88 @@ ul {
   padding: 0;
   li {
     margin: ($spacing-base / 2) auto;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 600;
-    color: $font-color-completed;
+    color: $font-color;
     padding: ($spacing-base / 2) ($spacing-base / 4);
-    .delete-button {
+    .delete-button, .complete-button {
+      cursor: pointer;
       float: right;
       clear: left;
+      margin: 0 2rem;
       color: $secondary-color;
+    }
+    .li-content:hover:after {
+      font-family: FontAwesome;
+      font-size: 1rem;
+      content: "\f040";
+      cursor: text;
+
+      position: relative;
+      bottom: 1.2rem;
+      left: .5rem;
+      color: $primary-color;
+    }
+    .complete-button {
+      color: $primary-color;
+    }
+    .input, .li-content {
+      font-size: 1.6rem;
     }
   }
 }
 
 
 input[type=text] {
-  min-height: 35px;
-  max-width: 50%;
+  min-height: 80%;
   background: #eee;
   border: none;
   color: $font-color;
-  font-size: 1.5rem;
+  border-radius: 5px;
+  outline: none;
+  &:active {
+    border: none;
+  }
 }
 
+input[type=checkbox] {
+  width: $spacing-base;
+  height: $spacing-base;
+  &:checked {
+    background: $primary-color;
+  }
+}
+
+.error {
+  border: 2px solid $secondary-color !important;
+}
+
+
+
 #new-todo {
-  margin: $spacing-base / 2;
+  cursor: pointer;
+  margin: ($spacing-base / 2) auto;
   color: $primary-color;
+}
+
+
+.complete .li-content {
+  text-decoration: line-through;
+  color: $font-color-completed;
+}
+
+.hidden {
+  display: none;
+}
+
+@media(min-width: 800px) {
+  ul {
+    width: 50%;
+  }
+}
+
+@media(min-width: 1200px) {
+  ul {
+    width: 40%;
+  }
 }
