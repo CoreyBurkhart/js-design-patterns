@@ -1,17 +1,15 @@
 //object literal design pattern
-
-{
-  let todo = function(todoText, remove, completeTodo) {
-    //the element itself
-    this.todoText = todoText || '';
-    this.id = Symbol(); //unique id for todo removal
-    this.inputVisible = true;
-    this.completed = false;
+(function() {
+  let todo = function(todoText = '', removeTodo, completeTodo, completed = false ) {
+    this.todoText = todoText;
+    this.removeTodo = removeTodo;
     this.completeTodo = completeTodo;
+    this.completed = completed;
+    this.id = Symbol(); //unique id for todo removal
     this.template = document.getElementById('list-template').cloneNode(true);
-    this.remove = remove;
-    this.removeTodo = function() {
-      this.remove(this.id);
+
+    this.remove = function(e) {
+      this.removeTodo(this.id);
     }
 
     this.edit = function(e) {
@@ -35,12 +33,16 @@
         input.onkeyup = this.edit.bind(this);
         input.onblur = this.toggleVisibility.bind(this);
         content.onclick = this.toggleVisibility.bind(this);
-        remove.onclick = this.removeTodo.bind(this);
+        remove.onclick = this.remove.bind(this);
         complete.onclick = this.complete.bind(this);
       } catch(e) {
-        console.log('could not add event listeners because none were provided', e);
+        console.log('could not bind event listeners because too few provided error: ', e);
       }
       //if it is a new todo we want the input to be visible
+      if(this.completed) {
+        complete.checked = true;
+        li.className = 'complete'
+      }
       if(this.todoText === '') {
         console.log('changed todo visibility');
         input.classList.toggle('hidden')
@@ -61,7 +63,6 @@
         this.element.classList.remove('complete')
         this.completed = false;
       }
-
     }
 
     this.toggleVisibility = function(e) {
@@ -69,7 +70,6 @@
       let inputCx = ch[0].classList,
           contentCx = ch[1].classList;
 
-      console.log(e);
       if(e.type === 'blur' && !inputCx.contains('hidden')) {
         try {
           if(e.target.value.length < 1) {
@@ -89,7 +89,6 @@
         //focus th input when shown
         setTimeout(() => {ch[0].focus()}, 100);
       }
-      // this.inputVisible = !this.inputVisible;
       todoList.render();
     }
 
@@ -110,69 +109,98 @@
 
     this.setDefaultText = function(text) {
       if(text !== '') {
+        //set both input and li text
         this.editElementContent(null, text)
       }
     }
-    this.createElement();
-    this.setDefaultText(todoText);
-}
-let todoList = {
-  savedTodos: ['walk the dog', 'do the dishes', 'wrap gifts', 'make it rain'],
+
+    this.init = function() {
+      this.createElement();
+      this.setDefaultText(todoText);
+    }
+    this.init();
+  }
+
+  let todoList = {
+  savedTodos: [],
   todos: [],
   cacheDOM: function() {
-    this.list = document.getElementById('list')
-    this.newTodoButton = document.getElementById('new-todo');
-  },
-  bindListeners: function() {
-    this.newTodoButton.onclick = this.addNewTodo.bind(this);
-  },
-  init: function() {
-    this.removeTodo = this.removeTodo.bind(this)
-    this.completeTodo = this.completeTodo.bind(this)
-    this.cacheDOM();
-    this.bindListeners();
-    for(const text of this.savedTodos) {
-      let obj = new todo(text, this.removeTodo, this.completeTodo);
-      this.todos.push(obj)
-    }
-    this.render();
-  },
-  getTodoIndex(id) {
-    let index = false;
-    this.todos.forEach((ele, i) => {
-      if(ele.id === id) {
-        index = i;
+      this.list = document.getElementById('list')
+      this.newTodoButton = document.getElementById('new-todo');
+    },
+  recoverTodos: function() {
+      if(window.localStorage.hasOwnProperty('todos')) {
+        let todos = JSON.parse(window.localStorage.todos);
+        console.log(todos);
+        let arr = [];
+        for(const obj of todos) {
+          arr.push({text: obj.todoText, completed: obj.completed});
+        }
+        console.log(arr);
+        this.savedTodos = arr;
       }
-    })
-    return index;
-  },
+    },
+  saveTodos: function(e) {
+      window.localStorage.clear()
+      window.localStorage.setItem('todos', JSON.stringify(this.todos));
+    },
+  bindListeners: function() {
+      this.newTodoButton.onclick = this.addNewTodo.bind(this);
+      window.onbeforeunload = this.saveTodos.bind(this);
+    },
+  init: function() {
+      this.removeTodo = this.removeTodo.bind(this)
+      this.completeTodo = this.completeTodo.bind(this)
+      this.recoverTodos();
+      this.cacheDOM();
+      this.bindListeners();
+      if(this.savedTodos.length)
+      for(const OBJ of this.savedTodos) {
+        let obj = new todo( OBJ.text, this.removeTodo, this.completeTodo,  OBJ.completed);
+        this.todos.push(obj)
+      }
+      this.render();
+    },
+  getTodoIndex(id) {
+      let index = false;
+      this.todos.forEach((ele, i) => {
+        if(ele.id === id) {
+          index = i;
+        }
+      })
+      return index;
+    },
   addNewTodo: function() {
-    //makes a todo object and adds it to the array of todo objects
-    let obj = new todo(null, this.removeTodo, this.completeTodo);
-    this.todos.push(obj);
-    this.render();
-  },
+      //makes a todo object and adds it to the array of todo objects
+      let obj = new todo(undefined, this.removeTodo, this.completeTodo, undefined);
+      this.todos.push(obj);
+      this.render();
+    },
   removeTodo: function(id) {
-    console.log('ran remove');
-    const todoIndex = this.getTodoIndex(id)
-    this.todos.splice(todoIndex, 1);
-    console.log(this.todos);
-    this.render();
-  },
+      console.log('ran remove');
+      const todoIndex = this.getTodoIndex(id)
+      try {
+        this.todos.splice(todoIndex, 1);
+      } catch(e) {
+        throw 'could not remove provided todo from todo array\nError: ' + e;
+      }
+      console.log(this.todos);
+      this.render();
+    },
   completeTodo: function(ele) {
-    let index = this.getTodoIndex(ele.id);
-    let todo = this.todos.splice(index, 1);
-    this.todos.push(todo[0]);
-    this.render();
-  },
+      let index = this.getTodoIndex(ele.id);
+      let todo = this.todos.splice(index, 1);
+      this.todos.push(todo[0]);
+      this.render();
+    },
   render: function() {
-    let list = this.list;
-    list.innerHTML = '';
-    this.todos.forEach((ele) => {
-      this.list.appendChild(ele.element);
-    });
+      let list = this.list;
+      list.innerHTML = '';
+      this.todos.forEach((ele) => {
+        list.appendChild(ele.element);
+      });
+    }
   }
-}
 
   todoList.init();
-}
+})()
