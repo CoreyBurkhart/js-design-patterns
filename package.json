@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "Examples of to-do app using differrent design patterns",
   "main": "index.js",
+  "engines": {
+    "node": "7.4.0"
+  },
   "scripts": {
+    "start": "node server.js",
     "dev": "npm run watch-scss & http-server ./src & google-chrome http://localhost:8080",
     "watch-scss": "mkdir -p src/css && sass --watch src/scss:src/css",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,5 +16,8 @@
   "license": "MIT",
   "devDependencies": {
     "http-server": "^0.9.0"
+  },
+  "dependencies": {
+    "express": "^4.14.0"
   }
 }
